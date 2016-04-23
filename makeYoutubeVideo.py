@@ -2,20 +2,20 @@
 # Import everything needed to edit video clips
 import sys
 from moviepy.editor import *
-
 import sys, getopt
 
 def help():
-    print 'makeYoutubeVideo.py -m <machineName> -t <thinginr> -i <timelapsevideo>'
+    print 'makeYoutubeVideo.py -s <backgroundmusic> -m <machineName> -t <thinginr> -i timelapsevideo'
     sys.exit()
 
 def main(argv):
     thingiverseNr = ""
     machineType=""
     videoName =""
+    musicName = ""
     introImageTime = 5 # time the intro image is shown in seconds
     try:
-        opts, args = getopt.getopt(argv,"hi:t:m:")
+        opts, args = getopt.getopt(argv,"hi:t:m:s:")
     except getopt.GetoptError:
         help()
 
@@ -28,13 +28,16 @@ def main(argv):
           thingiverseNr = arg
       elif opt in ("-m"):
           machineType = arg
+      elif opt in ("-s"):
+          musicName = arg
 
     if videoName == "":
         help()
         sys.exit()
+
     # Reduce the audio volume (volume x 0.8)
     clip = VideoFileClip(videoName)
-    clip = clip.volumex(0)
+    #clip = clip.volumex(0)
     clip = vfx.freeze(clip, 0, introImageTime)
     intro = vfx.blackwhite(clip)
     intro = vfx.freeze(intro, 0, introImageTime)
@@ -70,12 +73,20 @@ def main(argv):
     machinetypeTxt = machineTypeTxt.set_pos('center').set_duration(introImageTime)
 
     # Overlay the text clip on the first video clip
-    video = CompositeVideoClip([intro, machinetypeTxt, thingiverseTxt ])
+    video = CompositeVideoClip([clip,intro, machinetypeTxt, thingiverseTxt ])
     # Freeze the last frames and crop the video a little
-    video = vfx.freeze(video, video.duration - 0.1, introImageTime)
+    video = vfx.freeze(video, video.duration - 0.1, introImageTime*1.5)
     video.set_duration(video.duration - 0.2,True)
     # fade out.. 
-    video = vfx.fadeout(video, introImageTime)
+    video = vfx.fadeout(video, introImageTime * 2)
+
+    # add audio loop
+    if musicName != "":
+        audio = AudioFileClip(musicName)
+        audio = afx.audio_loop(audio,duration=video.duration)
+        print "adding audio " + musicName + " with looped to " + str(audio.duration) + "s"
+        video.audio = audio
+        video = afx.audio_fadeout(video, 5)
     # print infos
     w,h = video.size
     duration = video.duration
