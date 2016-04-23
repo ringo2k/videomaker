@@ -5,6 +5,8 @@ I made this video to get my timelapse videos a little more fancy for youtube wit
 
 This script uses moviepy for video editing. 
 
+Example:
+https://www.youtube.com/watch?v=snzgwYXz8sA
 
 
 Features
