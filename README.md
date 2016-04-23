@@ -17,6 +17,6 @@ Plans:
 * REST interface to thingiverse to get pictures of makes and thingis to add to video automatically
 
 
-makeYoutubeVideo.py -m <machineName> -t <thinginr> -i <timelapsevideo>
+makeYoutubeVideo.py -m machineName -t thinginr-i timelapsevideo
 
 
